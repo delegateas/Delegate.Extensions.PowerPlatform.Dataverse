@@ -82,7 +82,7 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
 
                 var configuration = sp.GetRequiredService<IConfiguration>();
                 var uri =
-                    new Uri(configuration.GetValue<string>("CDSEnvironment"));
+                    new Uri(configuration.GetValue<string>("DataverseEnvironment"));
 
                 ServiceClient.MaxConnectionTimeout = TimeSpan.FromMinutes(5);
                 ServiceClient service = CDSPolly.RetryPolicy.Execute((context) => new ServiceClient(uri,
