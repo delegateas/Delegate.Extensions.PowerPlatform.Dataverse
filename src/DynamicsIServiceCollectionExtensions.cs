@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.PowerPlatform.Cds.Client;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -69,14 +69,14 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
         }
 
         private static ConcurrentQueue<PooledOrganizaitionService> queue = new ConcurrentQueue<PooledOrganizaitionService>();
-        public static IServiceCollection AddPowerPlatform(this IServiceCollection services, bool cache = false)
+        public static IServiceCollection AddDataverse(this IServiceCollection services, bool cache = false)
         {
             services.AddSingleton<TokenService>();
             services.AddScoped((sp) =>
             {
                 if (queue.Any() && queue.TryDequeue(out var result))
                 {
-                    result.Logger = sp.GetRequiredService<ILogger<CdsServiceClient>>(); //Would be cool to get the loger for the function scope
+                    result.Logger = sp.GetRequiredService<ILogger<ServiceClient>>(); //Would be cool to get the loger for the function scope
                     return result;
                 }
 
@@ -84,20 +84,20 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
                 var uri =
                     new Uri(configuration.GetValue<string>("CDSEnvironment"));
 
-                CdsServiceClient.MaxConnectionTimeout = TimeSpan.FromMinutes(5);
-                CdsServiceClient service = CDSPolly.RetryPolicy.Execute((context) => new CdsServiceClient(uri,
+                ServiceClient.MaxConnectionTimeout = TimeSpan.FromMinutes(5);
+                ServiceClient service = CDSPolly.RetryPolicy.Execute((context) => new ServiceClient(uri,
                 sp.GetRequiredService<TokenService>().GetTokenAsync)
                 { }
                 , new Context
                 {
-                    ["logger"] = sp.GetRequiredService<ILogger<CdsServiceClient>>(),
+                    ["logger"] = sp.GetRequiredService<ILogger<ServiceClient>>(),
                 });
                 service.DisableCrossThreadSafeties = true;
                 //if (cache)
                 //    return new PooledOrganizaitonService( new CachingOrganizationService(sp.GetRequiredService<ILogger<CachingOrganizationService>>(), service, Microsoft.Azure.Cosmos.Table.CloudStorageAccount.Parse(configuration.GetValue<string>("CDSClientCacheStorageAccount"))) as IOrganizationService,queue);
                 return new PooledOrganizaitionService(service, queue)
                 {
-                    Logger = sp.GetRequiredService<ILogger<CdsServiceClient>>()
+                    Logger = sp.GetRequiredService<ILogger<ServiceClient>>()
                 };
 
 

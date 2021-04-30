@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PowerPlatform.Cds.Client.Utils;
+using Microsoft.PowerPlatform.Dataverse.Client.Utils;
 using Microsoft.Xrm.Sdk;
 using Polly;
 using Polly.Retry;
@@ -13,7 +13,7 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
     public static class CDSPolly
     {
         public static RetryPolicy RetryPolicy = Policy
-              .Handle<CdsClientConnectionException>(ShouldHandle)
+              .Handle<DataverseConnectionException>(ShouldHandle)
                .Or<FaultException<OrganizationServiceFault>>(ShouldHandle)
                .OrInner<TimeoutException>()
                .OrInner<SocketException>()
@@ -75,7 +75,7 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
             return TimeSpan.FromSeconds(Math.Pow(2, i));
         }
 
-        private static bool ShouldHandle(CdsClientConnectionException ex)
+        private static bool ShouldHandle(DataverseConnectionException ex)
         {
             if (ex.InnerException is AggregateException aggreex)
             {

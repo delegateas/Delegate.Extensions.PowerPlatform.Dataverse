@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
-using Microsoft.PowerPlatform.Cds.Client;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -12,21 +11,16 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
     {
         private IConfiguration configuration;
         private readonly IHttpClientFactory httpClientFactory;
-        private IConfidentialClientApplication app = null;
+        private Lazy<Task<IConfidentialClientApplication>> app = null;
 
         public TokenService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-        }
-
-
-        public async Task<string> GetTokenAsync(string arg)
-        {
-            if (app == default)
-            {
+            app = new Lazy<Task<IConfidentialClientApplication>>( async () => {
+            
                 var rsp = await httpClientFactory.CreateClient().GetAsync(
-                    $"{new Uri(configuration.GetValue<string>("CDSEnvironment")).GetLeftPart(UriPartial.Authority)}/api/data/v9.1/accounts");
+                        $"{new Uri(configuration.GetValue<string>("DataverseEnvironment")).GetLeftPart(UriPartial.Authority)}/api/data/v9.1/accounts");
                 var auth = rsp.Headers.GetValues("www-authenticate").FirstOrDefault();
                 var tenant = auth.Substring("Bearer ".Length).Split(',')
                     .Select(k => k.Trim().Split('='))
@@ -37,15 +31,22 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
                     .Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 
 
-                app = ConfidentialClientApplicationBuilder.Create(configuration.GetValue<string>("CDSClientId"))
+                return ConfidentialClientApplicationBuilder.Create(configuration.GetValue<string>("DataverseClientId"))
                     .WithTenantId(tenantId)
-                    .WithClientSecret(configuration.GetValue<string>("CDSClientSecret"))
+                    .WithClientSecret(configuration.GetValue<string>("DataverseClientSecret"))
                     .Build();
-            }
 
-            var token = await app.AcquireTokenForClient(new[]
+            }   ) ;
+        }
+
+
+        public async Task<string> GetTokenAsync(string arg)
+        {
+            
+
+            var token = await (await app.Value).AcquireTokenForClient(new[]
                 {
-                    new Uri(configuration.GetValue<string>("CDSEnvironment")).GetLeftPart(UriPartial.Authority)
+                    new Uri(configuration.GetValue<string>("DataverseEnvironment")).GetLeftPart(UriPartial.Authority)
                         .TrimEnd('/') + "//.default"
                 })
                 .ExecuteAsync();

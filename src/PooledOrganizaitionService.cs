@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PowerPlatform.Cds.Client;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -15,12 +15,12 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
     public class PooledOrganizaitionService : IDisposable, IOrganizationService
     {
         public bool UseWebApi { get; set; } = false;
-        private readonly CdsServiceClient service;
+        private readonly ServiceClient service;
         private readonly ConcurrentQueue<PooledOrganizaitionService> queue;
 
         public ILogger Logger { get; set; }
 
-        public PooledOrganizaitionService(CdsServiceClient service, ConcurrentQueue<PooledOrganizaitionService> queue)
+        public PooledOrganizaitionService(ServiceClient service, ConcurrentQueue<PooledOrganizaitionService> queue)
         {
             this.service = service ?? throw new ArgumentNullException(nameof(service));
             this.queue = queue ?? throw new ArgumentNullException(nameof(queue));
@@ -101,12 +101,12 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
                         Logger.LogInformation("Executing Operation<{RequestName}>", request.RequestName);
                     }
 
-                    var response = service.ExecuteCdsOrganizationRequest(request, useWebAPI: UseWebApi);
+                    var response = service.ExecuteOrganizationRequest(request, useWebAPI: UseWebApi);
 
                     if (response == null)
                     {
-                        Logger.LogInformation(service.LastCdsException, "Execution Failed for Operation<{RequestName}>", request.RequestName);
-                        throw service.LastCdsException;
+                        Logger.LogInformation(service.LastException, "Execution Failed for Operation<{RequestName}>", request.RequestName);
+                        throw service.LastException;
                     }
 
 
