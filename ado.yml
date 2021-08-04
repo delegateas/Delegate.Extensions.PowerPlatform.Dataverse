@@ -22,7 +22,7 @@ stages:
       isPre: true
       Major: 1
       Minor: 0
-      Patch: $[counter(format('{0}.{1}', variables['Major'], variables['Minor']), 0)]
+      Patch: $(Build.BuildId)
       PackageVersionType: "" #"-preview-$(Build.BuildNumber)"
       PackageVersion: $(Major).$(Minor).$(Patch)$(PackageVersionType)
 
@@ -49,8 +49,13 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)
 
     - task: NuGetCommand@2
+      displayName: 'nuget push'
       inputs:
         command: 'push'
+        feedsToUse: 'select'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'nuget'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'DL/DLF'
+        vstsFeed: 'DL/DLF'
+        versioningScheme: 'off'
+        allowPackageConflicts: true
