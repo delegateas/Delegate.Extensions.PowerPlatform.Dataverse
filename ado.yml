@@ -22,7 +22,7 @@ stages:
       isPre: true
       Major: 1
       Minor: 0
-      Patch: $[counter(format('{0}.{1}', variables['Major'], variables['Minor']), 0)]
+      Patch: $(Build.BuildNumber)
       PackageVersionType: "" #"-preview-$(Build.BuildNumber)"
       PackageVersion: $(Major).$(Minor).$(Patch)$(PackageVersionType)
 
