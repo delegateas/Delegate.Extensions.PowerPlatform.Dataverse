@@ -49,8 +49,13 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)
 
     - task: NuGetCommand@2
+      displayName: 'nuget push'
       inputs:
         command: 'push'
+        feedsToUse: 'select'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'nuget'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'DL/DLF'
+        vstsFeed: 'DL/DLF'
+        versioningScheme: 'off'
+        allowPackageConflicts: true
