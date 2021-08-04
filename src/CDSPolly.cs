@@ -48,8 +48,7 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
         {
             if (context.ContainsKey("logger") && context["logger"] is ILogger logger)
             {
-                if (count > 1)
-                    logger.LogInformation("Retrying attempt:{count} with backoff time:{time}", count, time);
+                logger.LogInformation("Retrying attempt:{count} with backoff time:{time}, exception was {ex}", count, time, ex);
             }
             //   Console.WriteLine($"Retrying attempt:{count} with backoff time:{time}");
         }
@@ -99,12 +98,16 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
                 }
                 else if (aggreex.InnerException is CommunicationException comex)
                 {
-                    Console.WriteLine("Failed to communicate"); //Network issue
+                    if (aggreex.InnerException.HResult == -2146233088) //The HTTP request was forbidden with client authentication scheme 'Anonymous'. == The client credentials doesn't have access to CRM. 
+                    {
+                        return false;
+                    }
+                    Console.WriteLine("Failed to communicate: " + aggreex.InnerException.Message); //Network issue
                     return true;
                 }
                 else if (aggreex.InnerException is TimeoutException timeout)
                 {
-                    Console.WriteLine("Failed to communicate: Timeout"); //Network issue
+                    Console.WriteLine("Failed to communicate: " + aggreex.InnerException.Message); //Network issue
                     return true;
                 }
 

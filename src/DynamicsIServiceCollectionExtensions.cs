@@ -86,7 +86,7 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
 
                 ServiceClient.MaxConnectionTimeout = TimeSpan.FromMinutes(5);
                 ServiceClient service = CDSPolly.RetryPolicy.Execute((context) => new ServiceClient(uri,
-                sp.GetRequiredService<TokenService>().GetTokenAsync)
+                sp.GetService<TokenService>().GetTokenAsync)
                 { }
                 , new Context
                 {
