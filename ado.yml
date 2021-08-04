@@ -22,7 +22,7 @@ stages:
       isPre: true
       Major: 1
       Minor: 0
-      Patch: $(Build.BuildNumber)
+      Patch: $(Build.BuildId)
       PackageVersionType: "" #"-preview-$(Build.BuildNumber)"
       PackageVersion: $(Major).$(Minor).$(Patch)$(PackageVersionType)
 
