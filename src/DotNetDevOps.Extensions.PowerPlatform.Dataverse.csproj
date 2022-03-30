@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>DotNetDevOps.Extensions.PowerPlatform.Dataverse</PackageId>
-    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Reliable and durable connector for Power Platform Dataverse</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
