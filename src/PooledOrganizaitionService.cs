@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
+namespace DG.Extensions.PowerPlatform.DataVerse
 {
 
     public class PooledOrganizaitionService : IDisposable, IOrganizationService
@@ -37,12 +37,6 @@ namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
             using (Logger.BeginScope(new Dictionary<string, string> { { "CreateOperationId", Guid.NewGuid().ToString() } }))
             {
                 Logger.LogInformation("Creating Entity<{EntityLogicalName}>", entity.LogicalName);
-                var createMessage = new CreateRequest
-                {
-                    Target = entity,
-                };
-
-
 
                 var createResponse = Execute<CreateResponse>(new CreateRequest
                 {

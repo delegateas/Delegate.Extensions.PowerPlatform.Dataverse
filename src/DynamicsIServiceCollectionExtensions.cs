@@ -11,7 +11,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.ServiceModel;
 
-namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
+namespace DG.Extensions.PowerPlatform.DataVerse
 {
     public static class DynamicsIServiceCollectionExtensions
     {

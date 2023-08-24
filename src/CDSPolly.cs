@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.ServiceModel;
 
-namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
+namespace DG.Extensions.PowerPlatform.DataVerse
 {
     public static class CDSPolly
     {

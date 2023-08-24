@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
+namespace DG.Extensions.PowerPlatform.DataVerse
 {
     public class TokenService
     {

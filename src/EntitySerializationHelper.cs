@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace DotNetDevOps.Extensions.PowerPlatform.DataVerse
+namespace DG.Extensions.PowerPlatform.DataVerse
 {
     public static class EntitySerializationHelper
     {
